@@ -6,17 +6,22 @@ from ijson.backends import yajl2_c as ijson
 import httpx
 
 from openpix.http import AbstractHTTPClient
+from openpix.utils import AsyncBytesReader
 
 
 class AsyncHTTPClientBase(AbstractHTTPClient):
-    def __init__(self, base_url: str, timeout: Optional[float] = 5) -> None:
+    def __init__(self, base_url: str = "", timeout: Optional[float] = 5) -> None:
         super().__init__(base_url=base_url, timeout=timeout)
-        self.client = httpx.AsyncClient(base_url=base_url, timeout=timeout)
+        self.__client = httpx.AsyncClient(base_url=base_url, timeout=timeout)
+
+    @property
+    def client(self) -> httpx.AsyncClient:
+        return self.__client
 
     @abstractmethod
     async def get(
         self,
-        endpoint: str,
+        endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
     ) -> httpx.Response:
@@ -25,7 +30,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def post(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -35,7 +40,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def put(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -45,7 +50,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def patch(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -55,7 +60,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def delete(
         self,
-        endpoint: str,
+        endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
     ) -> httpx.Response:
@@ -64,7 +69,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def get_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
@@ -75,7 +80,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def post_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -87,7 +92,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def put_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -99,7 +104,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def patch_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -111,7 +116,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @abstractmethod
     async def delete_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
@@ -141,7 +146,8 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
                 yield json.loads(buffer)
         else:
             try:
-                async for item in ijson.items_async(response.aiter_bytes(), prefix):
+                async_bytes_reader = AsyncBytesReader(response.aiter_bytes())
+                async for item in ijson.items_async(async_bytes_reader, prefix):
                     yield item
             except ijson.common.IncompleteJSONError:
                 pass
@@ -154,12 +160,12 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
 
 
 class AsyncHTTPClient(AsyncHTTPClientBase):
-    def __init__(self, base_url: str, timeout: Optional[float] = 5) -> None:
+    def __init__(self, base_url: str = "", timeout: Optional[float] = 5) -> None:
         super().__init__(base_url=base_url, timeout=timeout)
 
     async def get(
         self,
-        endpoint: str,
+        endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
     ) -> httpx.Response:
@@ -169,7 +175,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def post(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -182,7 +188,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def put(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -195,7 +201,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def patch(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -208,7 +214,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def delete(
         self,
-        endpoint: str,
+        endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
     ) -> httpx.Response:
@@ -220,7 +226,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def get_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
@@ -236,7 +242,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def post_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -253,7 +259,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def put_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -270,7 +276,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def patch_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
@@ -287,7 +293,7 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
 
     async def delete_stream(
         self,
-        endpoint: str,
+        endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
