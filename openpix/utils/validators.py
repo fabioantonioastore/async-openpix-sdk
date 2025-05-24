@@ -1,6 +1,13 @@
 from typing import Dict, Any
 
-from openpix.utils import WebhookEvent, Frequency, ChargeType, PixKeyType, TaxType, ApplicationType
+from openpix.utils import (
+    WebhookEvent,
+    Frequency,
+    ChargeType,
+    PixKeyType,
+    TaxType,
+    ApplicationType,
+)
 
 
 class Validators:
@@ -15,7 +22,6 @@ class Validators:
         if 1 <= day_generate_charge <= 31:
             return day_generate_charge
         raise "dayGenerateCharge must be a value between 1 and 31"
-
 
     @classmethod
     async def expires_in_validator(cls, expires_in: int) -> int:

@@ -1,15 +1,22 @@
-from pydantic import field_validator, Field
+from decimal import Decimal
+
+from pydantic import field_validator, Field, field_serializer
 
 from openpix.schemas import BaseSchema
-from openpix.utils import Validators
+from openpix.utils import Validators, Serializer
 
 
 class RefundCreate(BaseSchema):
-    value: int = Field(description="Value in cents")
+    value: Decimal = Field(decimal_places=2)
     transactionEndToEndId: str
     correlationID: str
     comment: str
 
     @field_validator("comment")
-    async def comment_validator(self, value: str) -> str:
+    @classmethod
+    async def comment_validator(cls, value: str) -> str:
         return await Validators.comment_validator(value)
+
+    @field_serializer("value")
+    async def value_serializer(self, value: Decimal) -> int:
+        return await Serializer.decimal_to_int(value)

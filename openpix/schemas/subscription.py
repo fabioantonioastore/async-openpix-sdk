@@ -1,13 +1,15 @@
-from pydantic import field_validator, Field
+from decimal import Decimal
+
+from pydantic import field_validator, Field, field_serializer
 from typing import Optional, Any, List, Dict
 
 from openpix.schemas import BaseSchema, Customer
-from openpix.utils import Validators
+from openpix.utils import Validators, Serializer
 
 
 class SubscriptionCreate(BaseSchema):
     customer: Customer
-    value: int = Field(description="Value in cents")
+    value: Decimal = Field(decimal_places=2)
     comment: Optional[str] = None
     additionalInfo: Optional[List[Dict[str, Any]]] = None
     dayGenerateCharge: int = 5
@@ -17,19 +19,27 @@ class SubscriptionCreate(BaseSchema):
     correlationID: str
 
     @field_validator("dayGenerateCharge")
-    async def day_generate_charge_validator(self, value: int) -> int:
+    @classmethod
+    async def day_generate_charge_validator(cls, value: int) -> int:
         return await Validators.day_generate_charge_validator(value)
 
     @field_validator("dayDue")
-    async def day_due_validator(self, value: int) -> int:
+    @classmethod
+    async def day_due_validator(cls, value: int) -> int:
         return await Validators.day_due_validator(value)
 
     @field_validator("frequency")
-    async def frequency_validator(self, value: str) -> str:
+    @classmethod
+    async def frequency_validator(cls, value: str) -> str:
         if value:
             return await Validators.frequency_validator(value)
         return value
 
     @field_validator("chargeType")
-    async def charge_type_validator(self, value: str) -> str:
+    @classmethod
+    async def charge_type_validator(cls, value: str) -> str:
         return await Validators.charge_type_validator(value)
+
+    @field_serializer("value")
+    async def value_serializer(self, value: Decimal) -> int:
+        return await Serializer.decimal_to_int(value)

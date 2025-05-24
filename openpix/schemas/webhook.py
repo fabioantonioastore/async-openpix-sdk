@@ -12,5 +12,6 @@ class WebhookCreate(BaseSchema):
     isActive: bool
 
     @field_validator("event")
-    async def event_validator(self, value: str) -> str:
+    @classmethod
+    async def event_validator(cls, value: str) -> str:
         return await Validators.webhook_event_validator(value)

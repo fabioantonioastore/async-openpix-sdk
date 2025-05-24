@@ -1,13 +1,19 @@
+from decimal import Decimal
 from typing import List
 
-from pydantic import Field
+from pydantic import Field, field_serializer
 
 from openpix.schemas import BaseSchema
+from openpix.utils import Serializer
 
 
 class DiscountFixedDate(BaseSchema):
     daysActive: int
-    value: int = Field(description="Value in cents")
+    value: Decimal = Field(decimal_places=2)
+
+    @field_serializer("value")
+    async def value_serializer(self, value: Decimal) -> int:
+        return await Serializer.decimal_to_int(value)
 
 
 class DiscountSettings(BaseSchema):

@@ -1,1 +1,1 @@
-from openpix.sdk.base_sdk import BaseSDK
+from .openpix_sdk import OpenPix

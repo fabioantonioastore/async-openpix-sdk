@@ -1,3 +1,2 @@
 from .abstract_http_client import AbstractHTTPClient
-from .async_http_client import AsyncHTTPClient
-from .async_bytes_reader import AsyncBytesReader
+from .async_http_client import AsyncHTTPClient, AsyncBytesReader

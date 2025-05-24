@@ -1,22 +1,24 @@
+from decimal import Decimal
 from typing import Optional, List, Dict, Any
 
-from pydantic import field_validator, Field
+from pydantic import field_validator, Field, field_serializer
 
 from openpix.schemas import BaseSchema, Split, Customer, Fines, Interests
-from openpix.utils import Validators
+from openpix.utils import Validators, Serializer
 
 
 class ChargeExpirationDateUpdate(BaseSchema):
     expiresDate: str
 
     @field_validator("expiresDate")
-    async def expires_date_validator(self, value: str) -> str:
+    @classmethod
+    async def expires_date_validator(cls, value: str) -> str:
         pass
 
 
 class ChargeCreate(BaseSchema):
     correlationID: str
-    value: int = Field(description="Value in cents")
+    value: Decimal = Field(decimal_places=2)
     type: Optional[str] = None
     comment: Optional[str] = None
     expiresIn: Optional[int] = None
@@ -33,21 +35,34 @@ class ChargeCreate(BaseSchema):
     splits: Optional[List[Split]] = None
 
     @field_validator("expiresIn")
-    async def expires_in_validator(self, value: int) -> int:
+    @classmethod
+    async def expires_in_validator(cls, value: int) -> int:
         return await Validators.expires_in_validator(value)
 
     @field_validator("type")
-    async def charge_type_validator(self, value: str) -> str:
+    @classmethod
+    async def charge_type_validator(cls, value: str) -> str:
         if value:
             return await Validators.charge_type_validator(value)
         return value
 
+    @field_serializer("value")
+    async def value_serializer(self, value: Decimal) -> int:
+        return await Serializer.decimal_to_int(value)
+
 
 class ChargeRefundCreate(BaseSchema):
     correlationID: str
-    value: Optional[int] = Field(None, description="value in cents")
+    value: Optional[Decimal] = Field(None, decimal_places=2)
     comment: Optional[str] = None
 
     @field_validator("comment")
-    async def comment_validator(self, value: str) -> str:
+    @classmethod
+    async def comment_validator(cls, value: str) -> str:
         return await Validators.comment_validator(value)
+
+    @field_serializer("value")
+    async def value_serializer(self, value: Decimal) -> Optional[int] | Decimal:
+        if value:
+            return await Serializer.decimal_to_int(value)
+        return value

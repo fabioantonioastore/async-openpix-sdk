@@ -9,5 +9,6 @@ class TaxID(BaseSchema):
     type: str
 
     @field_validator("type")
-    async def tax_type_validator(self, value: str) -> str:
+    @classmethod
+    async def tax_type_validator(cls, value: str) -> str:
         return await Validators.tax_type_validator(value)

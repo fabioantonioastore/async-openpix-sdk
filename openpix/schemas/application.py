@@ -9,7 +9,8 @@ class Application(BaseSchema):
     type: str
 
     @field_validator("type")
-    async def application_type_validator(self, value: str) -> str:
+    @classmethod
+    async def application_type_validator(cls, value: str) -> str:
         return await Validators.application_type_validator(value)
 
 
