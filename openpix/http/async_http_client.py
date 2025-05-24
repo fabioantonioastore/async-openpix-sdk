@@ -6,7 +6,7 @@ from ijson.backends import yajl2_c as ijson
 import httpx
 
 from openpix.http import AbstractHTTPClient
-from openpix.utils import AsyncBytesReader
+from openpix.http import AsyncBytesReader
 
 
 class AsyncHTTPClientBase(AbstractHTTPClient):
@@ -24,6 +24,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         pass
 
@@ -34,6 +35,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         pass
 
@@ -44,6 +46,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         pass
 
@@ -54,6 +57,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         pass
 
@@ -63,6 +67,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         pass
 
@@ -74,6 +79,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         pass
 
@@ -86,6 +92,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         pass
 
@@ -98,6 +105,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         pass
 
@@ -110,6 +118,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         pass
 
@@ -121,6 +130,7 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         pass
 
@@ -130,8 +140,12 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
     @staticmethod
     async def stream(
         response: httpx.Response, prefix: str = "item", njson: bool = False
-    ) -> AsyncGenerator[Dict[str, Any], None]:
+    ) -> Any:
         response.raise_for_status()
+        if "application/pdf" in response.headers.get("content-type", ""):
+            async for chunk in response.aiter_bytes():
+                yield chunk
+            return
         if njson:
             buffer = ""
             async for chunk in response.aiter_text():
@@ -144,13 +158,13 @@ class AsyncHTTPClientBase(AbstractHTTPClient):
                     yield json.loads(line)
             if buffer.strip():
                 yield json.loads(buffer)
-        else:
-            try:
-                async_bytes_reader = AsyncBytesReader(response.aiter_bytes())
-                async for item in ijson.items_async(async_bytes_reader, prefix):
-                    yield item
-            except ijson.common.IncompleteJSONError:
-                pass
+            return
+        try:
+            async_bytes_reader = AsyncBytesReader(response.aiter_bytes())
+            async for item in ijson.items_async(async_bytes_reader, prefix):
+                yield item
+        except ijson.common.IncompleteJSONError:
+            pass
 
     async def __aenter__(self):
         return self
@@ -168,8 +182,14 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
-        response = await self.client.get(url=endpoint, headers=headers, params=params)
+        response = await self.client.get(
+            url=endpoint,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
+        )
         response.raise_for_status()
         return response
 
@@ -179,9 +199,14 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         response = await self.client.post(
-            url=endpoint, json=payload, headers=headers, params=params
+            url=endpoint,
+            json=payload,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         )
         response.raise_for_status()
         return response
@@ -192,9 +217,14 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         response = await self.client.put(
-            url=endpoint, json=payload, headers=headers, params=params
+            url=endpoint,
+            json=payload,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         )
         response.raise_for_status()
         return response
@@ -205,9 +235,14 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         response = await self.client.patch(
-            url=endpoint, json=payload, headers=headers, params=params
+            url=endpoint,
+            json=payload,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         )
         response.raise_for_status()
         return response
@@ -217,9 +252,13 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         endpoint: str = "",
         headers: Optional[Dict[str, str]] = None,
         params: Optional[Dict[str, Any]] = None,
+        follow_redirects: bool = True,
     ) -> httpx.Response:
         response = await self.client.delete(
-            url=endpoint, headers=headers, params=params
+            url=endpoint,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         )
         response.raise_for_status()
         return response
@@ -231,9 +270,14 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         async with self.client.stream(
-            method="GET", url=endpoint, headers=headers, params=params
+            method="GET",
+            url=endpoint,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         ) as response:
             async for item in self.stream(
                 response=response, njson=njson, prefix=prefix
@@ -248,9 +292,15 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         async with self.client.stream(
-            method="POST", url=endpoint, json=payload, headers=headers, params=params
+            method="POST",
+            url=endpoint,
+            json=payload,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         ) as response:
             async for item in self.stream(
                 response=response, njson=njson, prefix=prefix
@@ -265,9 +315,15 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         async with self.client.stream(
-            method="PUT", url=endpoint, json=payload, headers=headers, params=params
+            method="PUT",
+            url=endpoint,
+            json=payload,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         ) as response:
             async for item in self.stream(
                 response=response, njson=njson, prefix=prefix
@@ -282,9 +338,15 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         async with self.client.stream(
-            method="PATCH", url=endpoint, json=payload, headers=headers, params=params
+            method="PATCH",
+            url=endpoint,
+            json=payload,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         ) as response:
             async for item in self.stream(
                 response=response, njson=njson, prefix=prefix
@@ -298,9 +360,14 @@ class AsyncHTTPClient(AsyncHTTPClientBase):
         params: Optional[Dict[str, Any]] = None,
         njson: bool = False,
         prefix: str = "item",
+        follow_redirects: bool = True,
     ) -> AsyncGenerator[Dict[str, Any]]:
         async with self.client.stream(
-            method="DELETE", url=endpoint, headers=headers, params=params
+            method="DELETE",
+            url=endpoint,
+            headers=headers,
+            params=params,
+            follow_redirects=follow_redirects,
         ) as response:
             async for item in self.stream(
                 response=response, njson=njson, prefix=prefix
