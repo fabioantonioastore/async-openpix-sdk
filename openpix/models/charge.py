@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from typing import Any, Dict, List
 
 from openpix.models import BaseModel, Customer, Subscription, PaymentMethods

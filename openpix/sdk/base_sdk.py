@@ -11,7 +11,7 @@ class BaseSDK:
         }
         self.__base_url = "https://api.openpix.com.br/api/v1/"
         if self.sandbox:
-            self.__base_url = "https://sandbox.openpix.com.br/api/v1/"
+            self.__base_url = "https://api.woovi-sandbox.com.br/api/v1/"
         self.__http_client = AsyncHTTPClient(base_url=self.__base_url)
 
     @property

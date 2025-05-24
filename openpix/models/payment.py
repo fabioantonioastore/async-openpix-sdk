@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 
-from openpix.models import BaseModel, PaymentTransaction
+from openpix.models import BaseModel
 
 
 @dataclass

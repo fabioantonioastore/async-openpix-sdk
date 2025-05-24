@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from typing import Any
 
 from openpix.models import BaseModel, CompanyBankAccount, PixQRCode, Charge, Customer

@@ -3,6 +3,6 @@ from openpix.http import AsyncHTTPClient
 
 
 @api_class_register
-class Payment(API):
+class PaymentAPI(API):
     def __init__(self, http_client: AsyncHTTPClient) -> None:
         super().__init__(http_client)

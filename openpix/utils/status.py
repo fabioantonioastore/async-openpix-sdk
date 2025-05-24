@@ -2,4 +2,6 @@ from enum import Enum
 
 
 class Status(str, Enum):
-    pass
+    IN_PROCESSING = "IN_PROCESSING"
+    CONFIRMED = "CONFIRMED"
+    REJECTED = "REJECTED"
