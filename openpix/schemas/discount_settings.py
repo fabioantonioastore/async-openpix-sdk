@@ -12,8 +12,8 @@ class DiscountFixedDate(BaseSchema):
     value: Decimal = Field(decimal_places=2)
 
     @field_serializer("value")
-    async def value_serializer(self, value: Decimal) -> int:
-        return await Serializer.decimal_to_int(value)
+    def value_serializer(self, value: Decimal) -> int:
+        return Serializer.decimal_to_int(value)
 
 
 class DiscountSettings(BaseSchema):

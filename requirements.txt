@@ -5,17 +5,23 @@ build==1.2.2.post1
 certifi==2025.4.26
 charset-normalizer==3.4.2
 click==8.2.1
+dnspython==2.7.0
+email_validator==2.2.0
 h11==0.16.0
 httpcore==1.0.9
 httpx==0.28.1
 idna==3.10
 ijson==3.4.0
 mypy_extensions==1.1.0
--e git+https://github.com/fabioantonioastore/async-openpix-sdk.git@0a9f23534605784e7969c72138ad10b6e2119d56#egg=openpix
+-e git+https://github.com/fabioantonioastore/async-openpix-sdk.git@bf54fe5f7c2167f10e5c73c7dd306e25dcdd4434#egg=openpix
 packaging==25.0
 pathspec==0.12.1
+phonenumbers==9.0.5
 platformdirs==4.3.8
+pycountry==24.6.1
 pydantic==2.11.5
+pydantic-br==1.1.0
+pydantic-extra-types==2.10.4
 pydantic_core==2.33.2
 pyproject_hooks==1.2.0
 requests==2.32.3

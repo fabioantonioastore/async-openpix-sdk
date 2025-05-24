@@ -9,7 +9,14 @@ from .payment_methods import PaymentMethods, Pix
 from .charge import Charge, ChargeRefund
 from .dispute import Dispute
 from .page_info import PageInfo
-from .partner import PartnerApplicationPayload, PreRegistration, PreRegistrationObjectPayload, PreRegistrationUserObject, AccountObjectPayload, CompanyObjectPayload
+from .partner import (
+    PartnerApplicationPayload,
+    PreRegistration,
+    PreRegistrationObjectPayload,
+    PreRegistrationUserObject,
+    AccountObjectPayload,
+    CompanyObjectPayload,
+)
 from .payment import Payment, PaymentDestination
 from .pix_qr_code import PixQRCode
 from .refund import Refund

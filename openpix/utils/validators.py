@@ -7,6 +7,7 @@ from openpix.utils import (
     PixKeyType,
     TaxType,
     ApplicationType,
+    SplitType,
 )
 
 
@@ -83,3 +84,17 @@ class Validators:
         if application_type in ApplicationType:
             return application_type
         raise f"Invalid applicationType {application_type!r}"
+
+    @classmethod
+    async def model_tax_id_validator(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        if (data["taxType"] == TaxType.CPF and "/" in data["taxID"]) or (
+            data["taxType"] == TaxType.CNPJ and not ("/" in data["taxID"])
+        ):
+            return data
+        raise f"Invalid data {data!r}"
+
+    @classmethod
+    async def split_type_validator(cls, split_type: str) -> str:
+        if split_type in SplitType:
+            return split_type
+        raise f"Invalid SplitType {split_type!r}"

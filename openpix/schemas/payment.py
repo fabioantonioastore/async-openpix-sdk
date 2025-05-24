@@ -27,9 +27,9 @@ class PaymentRequestPixKeyCreate(PaymentRequest):
         return await Validators.pix_key_type_validator(value)
 
     @field_serializer("value")
-    async def value_serializer(self, value: Decimal) -> Optional[int] | Decimal:
+    def value_serializer(self, value: Decimal) -> Optional[int] | Decimal:
         if value:
-            return await Serializer.decimal_to_int(value)
+            return Serializer.decimal_to_int(value)
         return value
 
 

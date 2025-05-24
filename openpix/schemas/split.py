@@ -1,9 +1,9 @@
 from decimal import Decimal
 
-from pydantic import Field, field_serializer
+from pydantic import Field, field_serializer, field_validator
 
 from openpix.schemas import BaseSchema
-from openpix.utils import Serializer
+from openpix.utils import Serializer, Validators
 
 
 class Split(BaseSchema):
@@ -11,6 +11,11 @@ class Split(BaseSchema):
     pixKey: str
     splitType: str
 
+    @field_validator("splitType")
+    @classmethod
+    async def split_type_validator(cls, value: str) -> str:
+        return await Validators.split_type_validator(value)
+
     @field_serializer("value")
-    async def value_serializer(self, value: Decimal) -> int:
-        return await Serializer.decimal_to_int(value)
+    def value_serializer(self, value: Decimal) -> int:
+        return Serializer.decimal_to_int(value)

@@ -36,7 +36,6 @@ class AsyncBytesReader:
             return data
 
 
-
 class AsyncHTTPClientBase(AbstractHTTPClient):
     def __init__(self, base_url: str = "", timeout: Optional[float] = 5) -> None:
         super().__init__(base_url=base_url, timeout=timeout)

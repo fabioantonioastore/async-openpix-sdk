@@ -14,7 +14,7 @@ class PixQRCodeStaticCreate(BaseSchema):
     comment: Optional[str] = None
 
     @field_serializer("value")
-    async def value_serializer(self, value: Decimal) -> Optional[int] | Decimal:
+    def value_serializer(self, value: Decimal) -> Optional[int] | Decimal:
         if value:
-            return await Serializer.decimal_to_int(value)
+            return Serializer.decimal_to_int(value)
         return value

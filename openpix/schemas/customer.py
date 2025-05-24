@@ -1,26 +1,30 @@
-from pydantic import model_validator
 from typing import Optional, Any, Dict
+
+from pydantic import model_validator, EmailStr
+from pydantic_extra_types.phone_numbers import PhoneNumber
+from pydantic_extra_types.country import CountryAlpha2
+from pydantic_br import CPF, CEP, SiglaEstado
 
 from openpix.schemas import BaseSchema
 from openpix.utils import Validators
 
 
 class Address(BaseSchema):
-    zipcode: str
+    zipcode: CEP
     street: str
     number: str
     neighborhood: str
     city: str
-    state: str
+    state: SiglaEstado
     complement: str
-    country: str
+    country: CountryAlpha2
 
 
 class Customer(BaseSchema):
     name: str
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    taxID: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[PhoneNumber] = None
+    taxID: Optional[CPF] = None
     correlationID: Optional[str] = None
     address: Optional[Address] = None
 
@@ -31,7 +35,7 @@ class Customer(BaseSchema):
 
 class CustomerUpdate(BaseSchema):
     name: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    taxID: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[PhoneNumber] = None
+    taxID: Optional[CPF] = None
     address: Optional[Address] = None

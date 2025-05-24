@@ -1,14 +1,16 @@
-from pydantic import field_validator
+from typing import Dict, Any
+
+from pydantic import model_validator
+from pydantic_br import CPF, CNPJ
 
 from openpix.schemas import BaseSchema
 from openpix.utils import Validators
 
 
 class TaxID(BaseSchema):
-    taxID: str
+    taxID: CPF | CNPJ
     type: str
 
-    @field_validator("type")
-    @classmethod
-    async def tax_type_validator(cls, value: str) -> str:
-        return await Validators.tax_type_validator(value)
+    @model_validator(mode="after")
+    async def tax_type_validator(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        return await Validators.model_tax_id_validator(data)

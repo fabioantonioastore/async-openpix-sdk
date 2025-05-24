@@ -5,5 +5,6 @@ from .frequency import Frequency
 from .charge import ChargeType
 from .tax import TaxType
 from .application import ApplicationType
+from .split import SplitType
 from .serializer import Serializer
 from .validators import Validators

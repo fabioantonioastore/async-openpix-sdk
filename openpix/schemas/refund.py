@@ -18,5 +18,5 @@ class RefundCreate(BaseSchema):
         return await Validators.comment_validator(value)
 
     @field_serializer("value")
-    async def value_serializer(self, value: Decimal) -> int:
-        return await Serializer.decimal_to_int(value)
+    def value_serializer(self, value: Decimal) -> int:
+        return Serializer.decimal_to_int(value)

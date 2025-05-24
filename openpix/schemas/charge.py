@@ -48,7 +48,7 @@ class ChargeCreate(BaseSchema):
 
     @field_serializer("value")
     async def value_serializer(self, value: Decimal) -> int:
-        return await Serializer.decimal_to_int(value)
+        return Serializer.decimal_to_int(value)
 
 
 class ChargeRefundCreate(BaseSchema):
@@ -62,7 +62,7 @@ class ChargeRefundCreate(BaseSchema):
         return await Validators.comment_validator(value)
 
     @field_serializer("value")
-    async def value_serializer(self, value: Decimal) -> Optional[int] | Decimal:
+    def value_serializer(self, value: Decimal) -> Optional[int] | Decimal:
         if value:
-            return await Serializer.decimal_to_int(value)
+            return Serializer.decimal_to_int(value)
         return value
