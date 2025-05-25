@@ -1,5 +1,4 @@
 from openpix.api import api_classes
-from openpix.http import AsyncHTTPClient
 
 
 class BaseSDK:
@@ -12,7 +11,6 @@ class BaseSDK:
         self.__base_url = "https://api.openpix.com.br/api/v1/"
         if self.sandbox:
             self.__base_url = "https://api.woovi-sandbox.com.br/api/v1/"
-        self.__http_client = AsyncHTTPClient(base_url=self.__base_url)
 
     @property
     def sandbox(self) -> bool:
@@ -30,10 +28,6 @@ class BaseSDK:
     def base_url(self) -> str:
         return self.__base_url
 
-    @property
-    def http_client(self) -> AsyncHTTPClient:
-        return self.__http_client
-
 
 class OpenPix(BaseSDK):
     def __init__(self, app_id: str, sandbox: bool = False) -> None:
@@ -42,7 +36,7 @@ class OpenPix(BaseSDK):
 
     def __instantiate_api_classes(self) -> None:
         for cls in api_classes:
-            instance = cls(self.http_client, self.headers)
+            instance = cls(self.base_url, self.headers)
             setattr(
                 self, f"_{self.__class__.__name__}__{cls.__name__.lower()}", instance
             )

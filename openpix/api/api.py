@@ -4,17 +4,17 @@ from openpix.http import AsyncHTTPClient
 
 
 class API:
-    def __init__(self, http_client: AsyncHTTPClient, headers: Dict[str, str]) -> None:
-        self.__http_client = http_client
+    def __init__(self, base_url: str, headers: Dict[str, str]) -> None:
         self.__headers = headers
-
-    @property
-    def http_client(self) -> AsyncHTTPClient:
-        return self.__http_client
+        self.__base_url = base_url
 
     @property
     def headers(self) -> Dict[str, str]:
         return self.__headers
+
+    @property
+    def base_url(self) -> str:
+        return self.__base_url
 
 
 api_classes = set()
