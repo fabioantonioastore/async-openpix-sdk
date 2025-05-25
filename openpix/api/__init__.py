@@ -14,3 +14,4 @@ from .receipt import ReceiptAPI
 from .transfer import TransferAPI
 from .transactions import TransactionsAPI
 from .pix_qr_code import PixQRCodeAPI
+from .cashback import CashbackAPI

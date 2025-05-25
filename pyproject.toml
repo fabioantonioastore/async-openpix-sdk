@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "openpix"
+name = "openpix-sdk"
 version = "0.1.0"
 authors = [
     {name = "Fabio Antonio Astore", email = "astore.a.fabio@gmail.com"}

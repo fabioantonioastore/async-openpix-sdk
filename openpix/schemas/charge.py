@@ -8,6 +8,7 @@ from openpix.utils import Validators, Serializer
 
 
 class ChargeExpirationDateUpdate(BaseSchema):
+    id: str
     expiresDate: str
 
     @field_validator("expiresDate")

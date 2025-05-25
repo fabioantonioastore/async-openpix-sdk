@@ -1,7 +1,5 @@
 from typing import Type, Dict
 
-from openpix.http import AsyncHTTPClient
-
 
 class API:
     def __init__(self, base_url: str, headers: Dict[str, str]) -> None:

@@ -15,6 +15,7 @@ class AccountRegister(BaseSchema):
 
 
 class WithdrawFromAccount(BaseSchema):
+    accountId: str
     value: Decimal = Field(decimal_places=2)
 
     @field_serializer("value")
