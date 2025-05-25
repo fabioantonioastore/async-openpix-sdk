@@ -1,5 +1,7 @@
 from .base_model import BaseModel
 from .balance import Balance
+from .account import CompanyBankAccount
+from .transactions import Withdraw, WithdrawTransaction, PixWithdrawTransaction, SubAccountWithdraw
 from .tax_id import TaxID, TaxIDObjectPayload
 from .application import Application
 from .cashback import Cashback

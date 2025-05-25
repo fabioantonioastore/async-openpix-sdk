@@ -13,12 +13,11 @@ httpx==0.28.1
 idna==3.10
 ijson==3.4.0
 mypy_extensions==1.1.0
--e git+https://github.com/fabioantonioastore/async-openpix-sdk.git@bf54fe5f7c2167f10e5c73c7dd306e25dcdd4434#egg=openpix
+-e git+https://github.com/fabioantonioastore/async-openpix-sdk.git@4fa2da2d761339127b5b8a85f2cd69e2558a5f01#egg=openpix
 packaging==25.0
 pathspec==0.12.1
 phonenumbers==9.0.5
 platformdirs==4.3.8
-pycountry==24.6.1
 pydantic==2.11.5
 pydantic-br==1.1.0
 pydantic-extra-types==2.10.4

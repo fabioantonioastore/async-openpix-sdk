@@ -7,8 +7,7 @@ class BaseSDK:
         self.__app_id = app_id
         self.__sandbox = sandbox
         self.__headers = {
-            "Authorization": self.app_id,
-            "Content-Type": "application/json",
+            "Authorization": self.app_id
         }
         self.__base_url = "https://api.openpix.com.br/api/v1/"
         if self.sandbox:
@@ -43,7 +42,7 @@ class OpenPix(BaseSDK):
 
     def __instantiate_api_classes(self) -> None:
         for cls in api_classes:
-            instance = cls(self.http_client)
+            instance = cls(self.http_client, self.headers)
             setattr(
                 self, f"_{self.__class__.__name__}__{cls.__name__.lower()}", instance
             )

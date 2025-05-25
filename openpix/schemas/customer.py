@@ -2,7 +2,7 @@ from typing import Optional, Any, Dict
 
 from pydantic import model_validator, EmailStr
 from pydantic_extra_types.phone_numbers import PhoneNumber
-from pydantic_extra_types.country import CountryAlpha2
+
 from pydantic_br import CPF, CEP, SiglaEstado
 
 from openpix.schemas import BaseSchema
@@ -17,7 +17,7 @@ class Address(BaseSchema):
     city: str
     state: SiglaEstado
     complement: str
-    country: CountryAlpha2
+    country: str = "BR"
 
 
 class Customer(BaseSchema):
