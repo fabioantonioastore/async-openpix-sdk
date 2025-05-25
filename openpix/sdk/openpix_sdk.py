@@ -5,9 +5,7 @@ class BaseSDK:
     def __init__(self, app_id: str, sandbox: bool = False) -> None:
         self.__app_id = app_id
         self.__sandbox = sandbox
-        self.__headers = {
-            "Authorization": self.app_id
-        }
+        self.__headers = {"Authorization": self.app_id}
         self.__base_url = "https://api.openpix.com.br/api/v1/"
         if self.sandbox:
             self.__base_url = "https://api.woovi-sandbox.com.br/api/v1/"
